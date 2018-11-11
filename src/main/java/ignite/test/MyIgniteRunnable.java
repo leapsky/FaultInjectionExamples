@@ -34,8 +34,6 @@ public class MyIgniteRunnable extends Example implements IgniteRunnable {
 
     private void transferMoney(int fromAccountId, int toAccountId) {
         try (Transaction tx = ignite.transactions().txStart(OPTIMISTIC, READ_COMMITTED)) {
-            System.out.println("start TX on client "+clientId);
-
             Account fromAccount = cache.get(fromAccountId);
             Account toAccount = cache.get(toAccountId);
 
@@ -63,7 +61,7 @@ public class MyIgniteRunnable extends Example implements IgniteRunnable {
             cache.put(toAccountId, toAccount);
 
             // Print log message
-            System.out.println("Transfer $" + amount + " from account " + fromAccountId + " to account " + toAccountId);
+            System.out.println("Client " + clientId + " transfers $" + amount + " from account " + fromAccountId + " to account " + toAccountId);
             tx.commit();
         } catch (Exception e){
             e.printStackTrace();
