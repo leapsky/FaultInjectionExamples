@@ -42,7 +42,6 @@ public class MyIgniteRunnable extends Example implements IgniteRunnable {
             int amount = getRandomAmount(fromAccount.balance);
 
             if (amount < 1) {
-                System.out.println("amount "+amount);
                 // No money in the account
                 return;
             }
