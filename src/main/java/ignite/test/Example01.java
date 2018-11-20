@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * Example01
  *
- * Demonstrates how a multi-thread application works with data stored in Apache Ignite.
+ * Demonstrates how a multi-task application works with data stored in Apache Ignite.
  * The application simulates money transferring between 10 bank accounts.
  *
  */

@@ -53,9 +53,6 @@ public class MyIgniteRunnable extends Example implements IgniteRunnable {
             // Deposit into account.
             toAccount.deposit(amount);
 
-            int fromAccountBalanceAfterTransfer = fromAccount.balance;
-            int toAccountBalanceAfterTransfer = toAccount.balance;
-
             // Store updated accounts in cache.
             cache.put(fromAccountId, fromAccount);
             cache.put(toAccountId, toAccount);
