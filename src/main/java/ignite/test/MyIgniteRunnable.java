@@ -41,11 +41,9 @@ public class MyIgniteRunnable extends Example implements IgniteRunnable {
 
             if (amount < 1) {
                 // No money in the account
+                tx.commit();
                 return;
             }
-
-            int fromAccountBalanceBeforeTransfer = fromAccount.balance;
-            int toAccountBalanceBeforeTransfer = toAccount.balance;
 
             // Withdraw from account
             fromAccount.withdraw(amount);

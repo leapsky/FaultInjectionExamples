@@ -75,6 +75,7 @@ public class Example02 extends Example {
             int amount = getRandomAmount(fromAccount.balance);
             if (amount < 1) {
                 // No money in the account
+                tx.commit();
                 return;
             }
 
