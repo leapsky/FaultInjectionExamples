@@ -23,7 +23,7 @@ public class Example00 extends Example {
 
     public static void main(String[] args) throws IgniteException, InterruptedException {
         try (Ignite ignite = Ignition.start(new IgniteConfiguration()
-                    .setIgniteInstanceName("client1")
+                    .setIgniteInstanceName("SingleClient")
                     .setDeploymentMode(DeploymentMode.PRIVATE)
                     .setPeerClassLoadingEnabled(true)
                     .setBinaryConfiguration(new BinaryConfiguration()
@@ -41,7 +41,6 @@ public class Example00 extends Example {
             )) {
 
             CacheConfiguration<Integer, Account> cfg = new CacheConfiguration<>(CACHE_NAME);
-            cfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
 
             try (IgniteCache<Integer, Account> cache = ignite.getOrCreateCache(cfg)) {
                 // Initializing the cache.

@@ -11,7 +11,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 
 import java.util.Arrays;
 
-public class StartNode {
+public class ServerNode {
     public static void main(String[] args) {
         Ignition.start(new IgniteConfiguration()
                 .setDeploymentMode(DeploymentMode.PRIVATE)

@@ -41,8 +41,7 @@ public class Example01 extends Example {
                 ))) {
 
             CacheConfiguration<Integer, Account> cfg = new CacheConfiguration<>(CACHE_NAME);
-            cfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-            cfg.setCacheMode(CacheMode.PARTITIONED);
+            cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
             cfg.setIndexedTypes(Integer.class, Account.class);
 
             try (IgniteCache<Integer, Account> cache = ignite.getOrCreateCache(cfg)) {

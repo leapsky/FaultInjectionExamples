@@ -33,7 +33,7 @@ public class MyIgniteRunnable extends Example implements IgniteRunnable {
     }
 
     private void transferMoney(int fromAccountId, int toAccountId) {
-        try (Transaction tx = ignite.transactions().txStart(OPTIMISTIC, READ_COMMITTED)) {
+        try (Transaction tx = ignite.transactions().txStart(OPTIMISTIC, SERIALIZABLE)) {
             Account fromAccount = cache.get(fromAccountId);
             Account toAccount = cache.get(toAccountId);
 

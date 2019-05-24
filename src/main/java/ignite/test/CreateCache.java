@@ -15,6 +15,9 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 
 import java.util.Arrays;
 
+import static org.apache.ignite.cache.CacheWriteSynchronizationMode.FULL_SYNC;
+import static org.apache.ignite.cache.CacheWriteSynchronizationMode.PRIMARY_SYNC;
+
 /**
  * CreateCache
  */
@@ -38,10 +41,12 @@ public class CreateCache extends Example {
                 ))) {
 
             CacheConfiguration<Integer, Account> cfg = new CacheConfiguration<>(CACHE_NAME);
+            cfg.setIndexedTypes(Integer.class, Account.class);
             cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
             cfg.setCacheMode(CacheMode.PARTITIONED);
-            cfg.setBackups(1);
-            cfg.setIndexedTypes(Integer.class, Account.class);
+            cfg.setBackups(2);
+            cfg.setReadFromBackup(true);
+            cfg.setWriteSynchronizationMode(FULL_SYNC);
 
             try (IgniteCache<Integer, Account> cache = ignite.getOrCreateCache(cfg)) {
                 // Initializing the cache.

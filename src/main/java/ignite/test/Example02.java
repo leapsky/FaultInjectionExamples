@@ -1,17 +1,19 @@
 package ignite.test;
 
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
-import org.apache.ignite.IgniteException;
-import org.apache.ignite.Ignition;
-import org.apache.ignite.cache.CachePeekMode;
+import org.apache.ignite.*;
 import org.apache.ignite.configuration.*;
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.transactions.Transaction;
+import org.apache.ignite.transactions.TransactionDeadlockException;
+
+import javax.cache.CacheException;
+
 import static org.apache.ignite.transactions.TransactionConcurrency.OPTIMISTIC;
 import static org.apache.ignite.transactions.TransactionIsolation.SERIALIZABLE;
+import static org.apache.ignite.transactions.TransactionConcurrency.PESSIMISTIC;
+import static org.apache.ignite.transactions.TransactionIsolation.REPEATABLE_READ;
 
 import java.util.*;
 
@@ -23,6 +25,9 @@ import java.util.*;
  *
  */
 public class Example02 extends Example {
+
+    private static int TX_TIMEOUT = 1000;
+
     public static void runClient(int clientId, int interations) throws IgniteException, InterruptedException {
         Ignition.setClientMode(true);
         try (Ignite ignite = Ignition.start(new IgniteConfiguration()
@@ -44,24 +49,20 @@ public class Example02 extends Example {
 
         )) {
             try (IgniteCache<Integer, Account> cache = ignite.getOrCreateCache(CACHE_NAME)) {
-                System.out.println("Accounts before transfers");
-                printAccounts(cache);
-                printTotalBalance(cache);
+                System.out.println("Client " + clientId + " started");
 
                 for (int i = 1; i <= interations; i++) {
                     transferMoney(cache, ignite);
                 }
 
                 System.out.println();
-                System.out.println("Accounts after transfers");
-                printAccounts(cache);
-                printTotalBalance(cache);
+                System.out.println("Client " + clientId + " finished");
             }
         }
     }
 
     private static void transferMoney(IgniteCache<Integer, Account> cache, Ignite ignite) {
-        try (Transaction tx = ignite.transactions().txStart(OPTIMISTIC, SERIALIZABLE)) {
+        try (Transaction tx = ignite.transactions().txStart(PESSIMISTIC, REPEATABLE_READ, TX_TIMEOUT, 10)) {
             int fromAccountId = getRandomNumberInRange(1, ENTRIES_COUNT);
             int toAccountId = getRandomNumberInRange(1, ENTRIES_COUNT);
 
@@ -91,6 +92,17 @@ public class Example02 extends Example {
 
             System.out.println("Transfer $" + amount + " from account " + fromAccountId + " to account " + toAccountId);
             tx.commit();
+        } catch (CacheException e) {
+            if (e.getCause() instanceof IgniteCheckedException &&
+                    e.getCause().getCause() instanceof TransactionDeadlockException) {
+
+                System.out.println(">>> Deadlock Detected:");
+                System.out.println(e.getCause().getCause().getMessage());
+                System.out.println();
+
+                return;
+            }
         }
+
     }
 }
